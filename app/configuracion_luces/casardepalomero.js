@@ -4,6 +4,7 @@ const blue = [0, 0, 255]
 const yellow = [255, 255, 0]
 const orange = [255, 170, 0]
 const purple = [170, 0, 255]
+
 var guardar_casardepalomero = {
   iglesia: [],
   campanario: []
@@ -25,6 +26,8 @@ function getLocalidad(type_ciudad, rgb) {
       return cruzbendita(rgb)
     case 'ermita':
       return ermita(rgb)
+    case 'caseres':
+      return caseres(rgb)
     default:
       return []
   }
@@ -45,7 +48,7 @@ function getColor(color, type_ciudad) {
     case 'purple':
       return getLocalidad(type_ciudad, purple)
     default:
-        return []
+      return []
   }
 }
 
@@ -81,6 +84,29 @@ function desaguadero(rgb) {
   for (var i = 0; i < 4; i++) {
     newList = newList.concat(getOffOnRGB(rgb, cont))
     cont += 5
+  }
+  return newList
+}
+
+function caseres(rgb) {
+  var cont = 1
+  var newList = []
+  for (var i = 0; i < 2; i++) {
+    newList.add(cont)
+    cont++
+    newList = newList.concat(getOffOnRGB(rgb, cont))
+    cont += 10
+  }
+  for (var i = 0; i < 8; i++) {
+    newList = newList.concat(getOffOnRGB(rgb, cont))
+    cont += 3
+  }
+  cont+=12
+  for (var i = 0; i < 2; i++) {
+    newList.add(cont)
+    cont++
+    newList = newList.concat(getOffOnRGB(rgb, cont))
+    cont += 10
   }
   return newList
 }

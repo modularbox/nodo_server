@@ -3,6 +3,8 @@ const cors = require('cors')
 const app = express()
 const logs = require('./app/utils/logs')
 const getColor = require('./app/configuracion_luces/casardepalomero')
+// Version del servidor
+const VERSION = '2.1.0-1';
 /// Configuracion del cliente de los sockets
 const SocketIOClient = require('./app/sockets/socket_ioclient')
 const client = new SocketIOClient('http://api.conectateriolobos.es:3005')
@@ -325,6 +327,15 @@ app.post('/:localidad/:lugar', (req, res) => {
     datosJosn.lugar = getLocalidadNodo(lugar)
     logs(JSON.stringify(datosJosn))
     client.socket.emit('programa', JSON.stringify(datosJosn))
+  }else if(localidad === 'modularbox'){
+    logs("Entro aqui")
+    console.log(idPagina.substring(4, idPagina.length))
+    var datosJosn = returnRespuesta(
+      getColor(idPagina.substring(5, idPagina.length), lugar)
+    )
+    datosJosn.lugar = getLocalidadNodo(lugar)
+    logs(JSON.stringify(datosJosn))
+    client.socket.emit('programa', JSON.stringify(datosJosn))
   }
   //}else{
   // req.body.lugar = lugar;
@@ -339,7 +350,27 @@ app.post('/luces/id', (req, res) => {
   res.status(200).send(`Luces enviadas con el idlisto`)
 })
 
+
+// Ruta GET para obtener el contenido del archivo
+app.get("/logs", (req, res) => {
+
+  if(req.query.token === 'TokenLogsModular2024'){
+  // Lee el contenido del archivo
+  fs.readFile("archivo_de_logs.txt", "utf8", (err, data) => {
+    if (err) {
+      console.error("Error al leer el archivo:", err);
+      return res.status(500).send("Error al leer el archivo");
+    }
+    // Envía el contenido del archivo como respuesta dentro de la etiqueta <pre>
+    res.send(`<pre>${data}</pre>`);
+  });
+  }else{
+    res.status(404).send('Not found');
+  }
+});
+
 /// Iniciar el servidor
 app.listen(PORT, () => {
-  logs('Listo por el puerto, ', PORT)
+  logs_truncate()
+  logs(`Listo por el puerto ${PORT}, Version app ${VERSION}`);
 })
